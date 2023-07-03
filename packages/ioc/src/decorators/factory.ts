@@ -5,6 +5,8 @@ import { ClassMetadata } from '../interface/decorators/metadata/class-metadata.i
 import { ClassType, isIdentifier, ProvideIdentifier } from '../interface/decorators/decorator';
 import { DecoratorUtils } from '../utils/decorator.utils';
 import { DependenciesMetadata } from '../interface/decorators/metadata/dependencies-metadata.interface';
+import { Runtime } from '../utils/runtime.utils';
+import getParamNames = Runtime.getParamNames;
 
 const provideIds = new Map<string, ProvideIdentifier<any>>();
 /**
@@ -183,16 +185,19 @@ function storeMetadata(name: string, metaName: string, args: any[], metadata?: a
       case 'field':
         storeFieldMetadata(name, metaName, context, metadata);
         return target;
+      case 'method':
+        console.log(getParamNames(target));
+        storeMethodMetadata(name, metaName, target, context, metadata, metadataExtends);
+        return target;
       default:
         throw new Error(`Invalid @${name} Decorator declaration.`);
     }
   }
   throw new Error(`Invalid @${name} Decorator declaration.`);
 }
-
 function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target, context: ClassDecoratorContext, metadata?: T, metadataExtends?: MetadataExtends) {
   // 设置数据
 }
-function storeFieldMetadata(name: string, metaName: string, context: ClassFieldDecoratorContext<unknown, unknown>, metadata: any) {}
+function storeFieldMetadata(name: string, metaName: string, context: ClassFieldDecoratorContext<unknown, unknown>, metadata: any, metadataExtends?: MetadataExtends) {}
 
-function getClassMetadata() {}
+function storeMethodMetadata(name: string, metaName: string, target: any, context: ClassMethodDecoratorContext, metadata: any, metadataExtends?: MetadataExtends) {}

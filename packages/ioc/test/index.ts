@@ -1,5 +1,6 @@
 import { createProvideIdentifierDecorator } from '../src/decorators/factory';
 import { Provide } from '../src/decorators/core/provide';
+import {Autowired} from '../src/decorators/core/autowired';
 
 const IDataProviderId = createProvideIdentifierDecorator('IDataProviderId');
 @Provide
@@ -16,9 +17,8 @@ export class User {
 
   constructor(id:number) {
   }
-
+  @Autowired
   sayHi(data:string) {
 
   }
 }
-
