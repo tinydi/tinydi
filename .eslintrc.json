@@ -1,0 +1,14 @@
+{
+  "extends": "./node_modules/@tinydi/style/.eslintrc.json",
+  "ignorePatterns": ["node_modules", "packages/version", "dist", "test", "jest.config.js"],
+  "rules": {
+    "no-control-regex": "off",
+    "@typescript-eslint/no-namespace": "off",
+    "max-len": ["error",{
+      "code": 180
+    }]
+  },
+  "env": {
+    "jest": true
+  }
+}

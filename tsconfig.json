@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "removeComments": true,
+    "noLib": false,
+    "useUnknownInCatchVariables": false,
+    "sourceMap": true,
+    "allowJs": false,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "target": "ES2022",
+    "strict": false,
+    "lib": ["ES2022", "esnext","dom","esnext.disposable","esnext.decorators"]
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test"
+  ],
+}

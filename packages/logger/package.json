@@ -1,0 +1,33 @@
+{
+  "name": "@tinydi/logger",
+  "version": "0.0.0-beta.1",
+  "description": "tinydi logger",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinydi/tinydi.git"
+  },
+  "keywords": [
+    "electron",
+    "bootstrap"
+  ],
+  "author": "electron-boot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tinydi/tinydi/issues"
+  },
+  "homepage": "https://github.com/tinydi/tinydi#readme",
+  "dependencies": {
+    "logform": "^2.5.1",
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  }
+}

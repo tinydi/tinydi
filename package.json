@@ -1,0 +1,51 @@
+{
+  "name": "tinydi",
+  "version": "0.0.0-beta.1",
+  "description": "a typescript version > 5.2 ioc",
+  "main": "index.js",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/tinydi/tinydi/issues"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "typescript ioc",
+    "ioc",
+    "decorator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinydi/tinydi.git"
+  },
+  "homepage": "https://github.com/tinydi/tinydi#readme",
+  "author": "tinydi <876771120@qq.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "eslint": "^8.44.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "lerna": "^7.1.1",
+    "lint-staged": "^13.2.3",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.0-beta"
+  }
+}
