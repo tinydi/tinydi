@@ -1,7 +1,8 @@
-import { createDecorator } from '../factory';
+import { createDecorator, createMethodPropParamDecorator } from '../factory';
 import { AutowiredMetadata } from '../../interface/decorators/metadata/autowired-metadata.interface';
 import { ClassFieldDecoratorFunction, ClassMethodDecoratorFunction } from '../../interface/decorators/decorator';
-import { Identifier } from '../../interface/common/identifier';
+import { Identifier, isIdentifier } from '../../interface/common/identifier';
+import { Types } from '../../utils/types.utils';
 
 export interface AutowiredDecorator {
   /**
@@ -11,9 +12,9 @@ export interface AutowiredDecorator {
    * ```typescript
    * @Autowired()
    * userService: UserService;
-   * @param identifier
+   * @param provider
    */
-  (identifier: Identifier): ClassFieldDecoratorFunction<any, any, any>;
+  (provider: Identifier): ClassFieldDecoratorFunction<any, any, any>;
 
   /**
    * autowired decorator
@@ -52,4 +53,4 @@ export interface AutowiredDecorator {
   (target: any, context: ClassFieldDecoratorContext): void;
 }
 
-export const Autowired: AutowiredDecorator = createDecorator<AutowiredMetadata>('Autowired', []);
+export const Autowired: AutowiredDecorator = createMethodPropParamDecorator<AutowiredMetadata>('Autowired', []);

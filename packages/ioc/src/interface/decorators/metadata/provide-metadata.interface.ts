@@ -13,5 +13,5 @@ export interface ProvideMetadata {
    * @type {Identifier}
    * @memberOf ProvideMetadata
    */
-  identifier?: Identifier;
+  provider?: Identifier;
 }

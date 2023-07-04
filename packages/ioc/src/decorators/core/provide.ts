@@ -8,24 +8,24 @@ import { ClassType } from '../../interface/common/type';
 export interface ProvideDecorator {
   /**
    * Provide decorator
-   * @param identifier
    * @example
    * ```typescript
    * @Provide("myService")
    * class MyService {}
+   * @param provider
    */
-  (identifier?: Identifier): ClassDecoratorFunction<any, any, any>;
+  (provider?: Identifier): ClassDecoratorFunction<any, any, any>;
 
   /**
    * Provide decorator
-   * @param identifier
+   * @param provider
    * @param scope
    * @example
    * ```typescript
    * @Provide("myService", Scope.Singleton)
    * class MyService {}
    */
-  (identifier: Identifier, scope?: Scope): ClassDecoratorFunction<any, any, any>;
+  (provider: Identifier, scope?: Scope): ClassDecoratorFunction<any, any, any>;
 
   /**
    * Provide decorator
@@ -37,7 +37,7 @@ export interface ProvideDecorator {
    * })
    * class MyService {}
    */
-  (metadata?: Pick<ClassMetadata, 'identifier' | 'scope'>): ClassDecoratorFunction<any, any, any>;
+  (metadata?: Pick<ClassMetadata, 'provider' | 'scope'>): ClassDecoratorFunction<any, any, any>;
   /**
    * Provide decorator
    * @param target

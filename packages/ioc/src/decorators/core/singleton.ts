@@ -25,7 +25,7 @@ export interface ProvideDecorator {
    * })
    * class MyService {}
    */
-  (metadata?: Pick<ClassMetadata, 'identifier'>): ClassDecoratorFunction<any, any, any>;
+  (metadata?: Pick<ClassMetadata, 'provider'>): ClassDecoratorFunction<any, any, any>;
   /**
    * Provide decorator
    * @param target

@@ -24,10 +24,4 @@ export interface ClassMetadata extends Metadata, PatternMetadata, TypeMetadata, 
    * @memberof ClassMetadata
    */
   originalName?: string;
-  /**
-   * The class dependencies.
-   * @type {DependenciesMetadata[]}
-   * @memberof ClassMetadata
-   */
-  dependencies?: DependenciesMetadata[];
 }

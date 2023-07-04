@@ -4,8 +4,11 @@ import { Types } from '../utils/types.utils';
 import { ClassMetadata } from '../interface/decorators/metadata/class-metadata.interface';
 import { DecoratorUtils } from '../utils/decorator.utils';
 import { Runtime } from '../utils/runtime.utils';
-import { isIdentifier } from '../interface/common/identifier';
-import getParamNames = Runtime.getParamNames;
+import { isIdentifier, isProvideIdentifier } from '../interface/common/identifier';
+import { MethodParamPropertyMetadata } from '../interface/decorators/metadata/method-param-property-metadata.interface';
+import { PropertyMetadata } from '../interface/decorators/metadata/property-metadata.interface';
+import { InjectMode } from '../enums/inject-mode.enum';
+import { setFieldMetadata } from './metadata-store';
 
 /**
  * extend metadata.
@@ -79,10 +82,36 @@ export function createClassDecorator<T extends ClassMetadata>(name: string, acti
   }
   return createDecorator<T>(name, actions, metadataExtends);
 }
+
+/**
+ * create method, property or parameter decorator.
+ *
+ * @export
+ * @template T
+ * @param {string} name
+ * @param {MetadataAdapter} [actions]  metadata adapter
+ * @param {MetadataExtends<T>} [metadataExtends] add extents for metadata.
+ * @returns {IMethodPropParamDecorator<T>}
+ */
+export function createMethodPropParamDecorator<T extends MethodParamPropertyMetadata>(name: string, actions?: ArgsIteratorAction<T>[], metadataExtends?: MetadataExtends<T>) {
+  actions = actions || [];
+  actions.push((ctx, next) => {
+    const arg = ctx.currArg;
+    if (Types.isArray(arg)) {
+      ctx.metadata.providers = arg;
+      ctx.next(next);
+    } else if (isIdentifier(arg)) {
+      ctx.metadata.provider = arg;
+      ctx.next(next);
+    }
+  });
+  const decorator = createDecorator<T>(name, actions, metadataExtends);
+  return decorator;
+}
+
 /**
  * create decorator for class params props methods.
  * @export
- * @template T
  * @param {string} name
  * @param {ArgsIteratorAction[]} [actions]  metadata iterator actions.
  * @param {MetadataExtends<T>} [metadataExtends] add extents for metadata.
@@ -98,7 +127,7 @@ export function createDecorator<T>(name: string, actions: ArgsIteratorAction[], 
       };
     }
     if (args.length === 2 && args[1].kind === 'class') {
-      return storeMetadata(name, metaName, args, metadata, metadataExtends);
+      return storeMetadata(name, metaName, args, metadataExtends);
     }
     metadata = argsToMetadata<T>(args, actions);
     if (metadata) {
@@ -111,13 +140,19 @@ export function createDecorator<T>(name: string, actions: ArgsIteratorAction[], 
   factory.toString = () => metaName;
   return factory;
 }
+
+/**
+ * args to metadata.
+ * @export
+ * @param args {any[]} args
+ * @param actions {ArgsIteratorAction[]} actions
+ * @returns {Metadata} metadata
+ */
 function argsToMetadata<T extends Metadata>(args: any[], actions?: ArgsIteratorAction<T>[]): T {
   let metadata: T = null;
   if (args.length) {
     if (args.length === 1 && DecoratorUtils.isMetadataObject(args[0])) {
       metadata = args[0];
-    } else if (metadata) {
-      metadata = null;
     } else {
       const ctx = new ArgsContext<T>(args);
       DecoratorUtils.chain(actions, ctx);
@@ -148,8 +183,25 @@ function storeMetadata(name: string, metaName: string, args: any[], metadata?: a
   }
   throw new Error(`Invalid @${name} Decorator declaration.`);
 }
-function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target, context: ClassDecoratorContext, metadata?: T, metadataExtends?: MetadataExtends) {}
-function storeFieldMetadata(name: string, metaName: string, context: ClassFieldDecoratorContext<unknown, unknown>, metadata: any, metadataExtends?: MetadataExtends) {}
+function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target, context: ClassDecoratorContext, metadata?: T, metadataExtends?: MetadataExtends) {
+  const decoratorMetadata = context.metadata;
+  console.log('进入了class', metadata);
+}
+function storeFieldMetadata<T extends PropertyMetadata>(name: string, metaName: string, context: ClassFieldDecoratorContext, metadata?: T) {
+  console.log('进入了field');
+  metadata = metadata || ({} as T);
+  metadata.propertyKey = context.name;
+  metadata.decorator = name;
+  metadata.access = context.access;
+  if (isProvideIdentifier(metadata.provider)) {
+    metadata.injectMode = InjectMode.Class;
+  } else if (isIdentifier(metadata.provider)) {
+    metadata.injectMode = InjectMode.Identifier;
+  } else {
+    metadata.injectMode = InjectMode.PropertyKey;
+  }
+  setFieldMetadata(metaName, metadata, context);
+}
 function storeMethodMetadata(name: string, metaName: string, target: any, context: ClassMethodDecoratorContext, metadata: any, metadataExtends?: MetadataExtends) {
-  const paramNames = getParamNames(target);
+  console.log('进入了method');
 }
