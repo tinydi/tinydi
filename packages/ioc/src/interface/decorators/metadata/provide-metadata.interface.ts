@@ -1,4 +1,4 @@
-import { Identifier } from '../decorator';
+import { Identifier } from '../../common/identifier';
 
 /**
  * provide metadata
@@ -14,10 +14,4 @@ export interface ProvideMetadata {
    * @memberOf ProvideMetadata
    */
   identifier?: Identifier;
-  /**
-   * alias for the identifier
-   * @type {string}
-   * @memberOf ProvideMetadata
-   */
-  alias?: string;
 }

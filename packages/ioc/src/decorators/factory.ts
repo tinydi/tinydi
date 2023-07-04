@@ -2,13 +2,11 @@ import { ArgsContext, ArgsIteratorAction } from './args';
 import { Metadata } from '../interface/decorators/metadata/metadata.interface';
 import { Types } from '../utils/types.utils';
 import { ClassMetadata } from '../interface/decorators/metadata/class-metadata.interface';
-import { ClassType, isIdentifier, ProvideIdentifier } from '../interface/decorators/decorator';
 import { DecoratorUtils } from '../utils/decorator.utils';
-import { DependenciesMetadata } from '../interface/decorators/metadata/dependencies-metadata.interface';
 import { Runtime } from '../utils/runtime.utils';
+import { isIdentifier } from '../interface/common/identifier';
 import getParamNames = Runtime.getParamNames;
 
-const provideIds = new Map<string, ProvideIdentifier<any>>();
 /**
  * extend metadata.
  *
@@ -20,30 +18,6 @@ export interface MetadataExtends<T = any> {
   (metadata: T): void;
 }
 
-/**
- * The *only* valid way to create a {{ProvideIdentifier}}.
- * @return {ProvideIdentifier}
- */
-export function createProvideIdentifierDecorator<T>(provideId: string): ProvideIdentifier<T> {
-  const metaName = `@${provideId}`;
-  if (provideIds.has(provideId)) {
-    return provideIds.get(provideId)!;
-  }
-  const id = <any>function (target: ClassType, context: ClassMemberDecoratorContext): any {
-    if (['field'].indexOf(context.kind) === -1) {
-      throw new Error('@IServiceName-decorator can only be used to decorate a field');
-    }
-    storeMetadata(provideId, metaName, [target, context], {
-      identifier: id.toString(),
-      private: context.private,
-      static: context.static,
-    } as DependenciesMetadata);
-  };
-  id.provideId = true;
-  id.toString = () => provideId;
-  provideIds.set(provideId, id);
-  return id;
-}
 /**
  * create class decorator
  *
@@ -84,7 +58,6 @@ export function createClassDecorator<T extends ClassMetadata>(name: string, acti
     appendCheck = metadataExtends;
     metadataExtends = undefined;
   }
-
   if (appendCheck) {
     actions = actions || [];
     actions.push(
@@ -98,20 +71,7 @@ export function createClassDecorator<T extends ClassMetadata>(name: string, acti
       (ctx, next) => {
         const arg = ctx.currArg;
         if (Types.isString(arg)) {
-          ctx.metadata.alias = arg;
-          ctx.next(next);
-        }
-      },
-      (ctx, next) => {
-        const arg = ctx.currArg;
-        if (Types.isBoolean(arg)) {
-          ctx.metadata.singleton = arg;
-          ctx.next(next);
-        } else if (Types.isNumber(arg)) {
-          ctx.metadata.expires = arg;
-          ctx.next(next);
-        } else if (isIdentifier(arg)) {
-          ctx.metadata.refs = { target: arg, provide: ctx.metadata.provide || ctx.metadata.type, alias: ctx.metadata.alias };
+          ctx.metadata.scope = arg;
           ctx.next(next);
         }
       }
@@ -137,21 +97,15 @@ export function createDecorator<T>(name: string, actions: ArgsIteratorAction[], 
         return storeMetadata(name, metaName, args, metadata, metadataExtends);
       };
     }
+    if (args.length === 2 && args[1].kind === 'class') {
+      return storeMetadata(name, metaName, args, metadata, metadataExtends);
+    }
     metadata = argsToMetadata<T>(args, actions);
     if (metadata) {
       return (...args: any[]) => {
         return storeMetadata(name, metaName, args, metadata, metadataExtends);
       };
-    } else {
-      if (args.length === 1) {
-        if (!Types.isClass(args[0])) {
-          return (...args: any[]) => {
-            return storeMetadata(name, metaName, args, metadata, metadataExtends);
-          };
-        }
-      }
     }
-    // 执行保存元数据
     return storeMetadata(name, metaName, args, metadataExtends);
   };
   factory.toString = () => metaName;
@@ -186,7 +140,6 @@ function storeMetadata(name: string, metaName: string, args: any[], metadata?: a
         storeFieldMetadata(name, metaName, context, metadata);
         return target;
       case 'method':
-        console.log(getParamNames(target));
         storeMethodMetadata(name, metaName, target, context, metadata, metadataExtends);
         return target;
       default:
@@ -195,9 +148,8 @@ function storeMetadata(name: string, metaName: string, args: any[], metadata?: a
   }
   throw new Error(`Invalid @${name} Decorator declaration.`);
 }
-function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target, context: ClassDecoratorContext, metadata?: T, metadataExtends?: MetadataExtends) {
-  // 设置数据
-}
+function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target, context: ClassDecoratorContext, metadata?: T, metadataExtends?: MetadataExtends) {}
 function storeFieldMetadata(name: string, metaName: string, context: ClassFieldDecoratorContext<unknown, unknown>, metadata: any, metadataExtends?: MetadataExtends) {}
-
-function storeMethodMetadata(name: string, metaName: string, target: any, context: ClassMethodDecoratorContext, metadata: any, metadataExtends?: MetadataExtends) {}
+function storeMethodMetadata(name: string, metaName: string, target: any, context: ClassMethodDecoratorContext, metadata: any, metadataExtends?: MetadataExtends) {
+  const paramNames = getParamNames(target);
+}

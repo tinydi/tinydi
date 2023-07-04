@@ -1,6 +1,7 @@
 import { createDecorator } from '../factory';
 import { AutowiredMetadata } from '../../interface/decorators/metadata/autowired-metadata.interface';
-import { ClassFieldDecoratorFunction, ClassMemberDecoratorFunction, Identifier } from '../../interface/decorators/decorator';
+import { ClassFieldDecoratorFunction, ClassMethodDecoratorFunction } from '../../interface/decorators/decorator';
+import { Identifier } from '../../interface/common/identifier';
 
 export interface AutowiredDecorator {
   /**
@@ -12,30 +13,33 @@ export interface AutowiredDecorator {
    * userService: UserService;
    * @param identifier
    */
-  (identifier?: Identifier): ClassFieldDecoratorFunction<any, any, any>;
+  (identifier: Identifier): ClassFieldDecoratorFunction<any, any, any>;
+
   /**
    * autowired decorator
-   * @param alias
+   * @param providers
    * @example
    * ```typescript
-   * @Autowired('userServiceAlias')
-   * userService: UserService;
+   * export class Animal {
+   *    @Autowired([DogService, CatService])
+   *    say(dogService: DogService, catService: CatService){
+   *      dogService.say();
+   *      catService.say();
+   *    }
+   * }
    */
-  (alias?: string): ClassFieldDecoratorFunction<any, any, any>;
-
+  (providers: Identifier[]): ClassMethodDecoratorFunction<any, any, any>;
   /**
    * autowired decorator
    * @param metadata
    * @example
    * ```typescript
    * @Autowired({
-   *   identifier: UserService,
-   *   alias: 'userServiceAlias',
+   *   identifier: UserService
    * })
    * userService: UserService;
    */
-  (metadata?: AutowiredMetadata): ClassMemberDecoratorFunction<any, any, any>;
-
+  (metadata?: AutowiredMetadata): ClassFieldDecoratorFunction<any, any, any>;
   /**
    * autowired decorator
    * @param target
@@ -45,7 +49,7 @@ export interface AutowiredDecorator {
    * @Autowired
    * userService: UserService;
    */
-  (target: any, context: ClassMemberDecoratorContext): void;
+  (target: any, context: ClassFieldDecoratorContext): void;
 }
 
 export const Autowired: AutowiredDecorator = createDecorator<AutowiredMetadata>('Autowired', []);

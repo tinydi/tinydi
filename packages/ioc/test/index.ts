@@ -1,24 +1,36 @@
-import { createProvideIdentifierDecorator } from '../src/decorators/factory';
 import { Provide } from '../src/decorators/core/provide';
-import {Autowired} from '../src/decorators/core/autowired';
+import { Autowired } from '../src/decorators/core/autowired';
 
-const IDataProviderId = createProvideIdentifierDecorator('IDataProviderId');
+export interface Animal {
+  say(): void;
+}
 @Provide
-export class Data {}
-
-// @Injectable(Data as unknown as Identifier)
+export class Dog implements Animal {
+  say() {
+    console.log('dog');
+  }
+}
+@Provide
+export class Cat implements Animal {
+  say() {
+    console.log('cat');
+  }
+}
+@Provide
 export class User {
   private _id:number
-  // @IDataProviderId
-  data: Data;
+
+  constructor(data:Animal) {
+    console.log(data);
+  }
+
   get id() {
     return this._id;
   }
-
-  constructor(id:number) {
-  }
-  @Autowired
-  sayHi(data:string) {
+  @Autowired([Dog,Cat])
+  sayHi(dog:Animal,cat:Animal) {
 
   }
 }
+
+console.log("a".toString());

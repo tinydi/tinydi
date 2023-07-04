@@ -15,18 +15,6 @@ export interface ProvideDecorator {
    * class MyService {}
    */
   (identifier?: Identifier): ClassDecoratorFunction<any, any, any>;
-
-  /**
-   * Provide decorator
-   * @param identifier
-   * @param scope
-   * @example
-   * ```typescript
-   * @Provide("myService", Scope.Singleton)
-   * class MyService {}
-   */
-  (identifier: Identifier, scope?: Scope): ClassDecoratorFunction<any, any, any>;
-
   /**
    * Provide decorator
    * @param metadata
@@ -37,7 +25,7 @@ export interface ProvideDecorator {
    * })
    * class MyService {}
    */
-  (metadata?: Pick<ClassMetadata, 'identifier' | 'scope'>): ClassDecoratorFunction<any, any, any>;
+  (metadata?: Pick<ClassMetadata, 'identifier'>): ClassDecoratorFunction<any, any, any>;
   /**
    * Provide decorator
    * @param target
@@ -49,4 +37,6 @@ export interface ProvideDecorator {
    */
   (target?: ClassType, _context?: ClassDecoratorContext): void;
 }
-export const Provide: ProvideDecorator = createClassDecorator<ClassMetadata>('Provide', true);
+export const Singleton: ProvideDecorator = createClassDecorator<ClassMetadata>('Singleton', null, metadata => {
+  metadata.scope = Scope.Singleton;
+});

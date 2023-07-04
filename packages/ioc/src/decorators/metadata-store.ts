@@ -1,14 +1,12 @@
 import '../utils/symbol.utils';
-import { ClassMetadataFilter, IMetadataStore } from '../interface/decorators/store.interface';
+import { ClassMetadataFilter, IMetadataStore } from '../interface/decorators/metadata-store.interface';
 import { ClassMetadata } from '../interface/decorators/metadata/class-metadata.interface';
 import { DependenciesMetadata } from '../interface/decorators/metadata/dependencies-metadata.interface';
 
-export class MetadataStore implements IMetadataStore {
+class MetadataStore implements IMetadataStore {
   // context与metadata的映射
   #contextMetadata = new WeakMap<any, ClassMetadata>();
-  saveClassMetadata<T extends ClassMetadata>(decoratorMetadata: DecoratorMetadata, metadata: T) {
-    this.#contextMetadata.set(decoratorMetadata, metadata);
-  }
+  saveMetadata(decorator: string, metadata: any, context: ClassDecoratorContext) {}
   getClassMetadata<T extends ClassMetadata>(decoratorMetadata: DecoratorMetadata): T {
     return null;
   }
@@ -36,11 +34,9 @@ export class MetadataStore implements IMetadataStore {
   }
 }
 let metadataStore = new MetadataStore();
-if (typeof global === 'object') {
-  if (global['TINYDI_GLOBAL_METADATA_STORE']) {
-    console.warn('global metadata store already exists, please check @tinydi/core version by "npm ls @tinydi/core"');
-    metadataStore = global['TINYDI_GLOBAL_METADATA_STORE'];
-  } else {
-    global['TINYDI_GLOBAL_METADATA_STORE'] = metadataStore;
-  }
+if (Symbol['metadataStore']) {
+  metadataStore = Symbol['metadataStore'];
+  console.warn('global metadata store already exists, please check @tinydi/core version by "npm ls @tinydi/core"');
+} else {
+  Symbol['metadataStore'] = metadataStore;
 }

@@ -1,4 +1,4 @@
-import { ScopeEnum } from '../../../enums/scope.enum';
+import { Scope } from '../../../enums/scope.enum';
 
 /**
  * scope metadata
@@ -12,5 +12,5 @@ export interface PatternMetadata {
    * @Type {ScopeEnum}
    * @memberOf PatternMetadata
    */
-  scope?: ScopeEnum;
+  scope?: Scope;
 }

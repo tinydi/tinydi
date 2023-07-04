@@ -1,7 +1,7 @@
 /**
  * class scope
  */
-export enum ScopeEnum {
+export enum Scope {
   Singleton = 'Singleton',
   Request = 'Request',
   Prototype = 'Prototype',

@@ -10,5 +10,5 @@ export interface Metadata {
    * @type {string[]}
    * @memberOf Metadata
    */
-  decorator?: string[];
+  decorator?: string;
 }

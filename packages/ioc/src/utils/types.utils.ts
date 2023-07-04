@@ -1,10 +1,10 @@
 import * as util from 'util';
+import { SymbolMetadata } from './symbol.utils';
 
 const ToString = Function.prototype.toString;
 const hasOwn = Object.prototype.hasOwnProperty;
 const toStr = Object.prototype.toString;
 const symbolTag = '[object Symbol]';
-
 function isString(value) {
   return typeof value === 'string';
 }
@@ -18,6 +18,7 @@ function isClass(target, exclude?: (target: any) => boolean) {
   if (exclude && exclude(target)) {
     return false;
   }
+  if (target[SymbolMetadata]) return true;
   if (isPrimitiveType(target)) return false;
   const str = target.toString();
   if (clify.test(str)) return true;
@@ -122,16 +123,11 @@ function isSymbol(value) {
   return typeof value === 'symbol' || (isObject(value) && Object.prototype.toString.call(value) === symbolTag);
 }
 
-function isIdentifier(value) {
-  return isString(value) || isSymbol(value);
-}
-
 export const Types = {
   isClass,
   isAsyncFunction,
   isGeneratorFunction,
   isSymbol,
-  isIdentifier,
   isString,
   isPromise,
   isFunction,

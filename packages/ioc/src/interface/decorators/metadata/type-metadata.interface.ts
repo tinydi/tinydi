@@ -1,5 +1,5 @@
 import { Metadata } from './metadata.interface';
-import { ClassType } from '../decorator';
+import { ClassType } from '../../common/type';
 
 /**
  * type metadata
