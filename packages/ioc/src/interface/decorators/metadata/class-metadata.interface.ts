@@ -3,7 +3,6 @@ import { PatternMetadata } from './scope-metadata.interface';
 import { TypeMetadata } from './type-metadata.interface';
 import { ProvideMetadata } from './provide-metadata.interface';
 import { NamespaceMetadata } from './namespace-metadata';
-import { DependenciesMetadata } from './dependencies-metadata.interface';
 
 export interface ClassMetadata extends Metadata, PatternMetadata, TypeMetadata, ProvideMetadata, NamespaceMetadata {
   /**

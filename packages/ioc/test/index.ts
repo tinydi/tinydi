@@ -19,7 +19,6 @@ export class Dog {
 // }
 @Provide()
 export class User {
-  @Autowired(Dog)
+  // @Autowired(Dog)
   dog:Dog
 }
-

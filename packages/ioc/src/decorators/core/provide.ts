@@ -6,7 +6,7 @@ import { ClassType } from '../../interface/common/type';
 import { createDecorator } from '../factory';
 import { PROVIDE_DECORATOR } from '../constant';
 import { Store } from '../store';
-import saveClassMetadata = Store.saveClassMetadata;
+import { generateUUID } from '../../utils/uui.utils';
 
 export interface ProvideDecorator {
   /**
@@ -53,20 +53,32 @@ export interface ProvideDecorator {
   (target?: ClassType, _context?: ClassDecoratorContext): void;
 }
 export const Provide: ProvideDecorator = createDecorator(PROVIDE_DECORATOR, (target, context, args) => {
-  const metadata: ClassMetadata = {};
-  saveClassMetadata(PROVIDE_DECORATOR, { provider: 'log' }, context);
-  // 如果保存过
-  if (context.metadata?.uuid) {
-    switch (args.length) {
-      case 0:
-        metadata.provider = target;
-        break;
-      case 1:
-        context.metadata.provider = args[0];
-        break;
-    }
-  } else {
-    console.log('进来了', context.metadata);
-  }
+  // If there is an uuid, it indicates that the class has been marked by a class decorator
+  const classMetadata: ClassMetadata = {};
+  // if (context.metadata?.uuid) {
+  //   console.log(context.metadata?.uuid);
+  // } else {
+  //   context.metadata.uuid = uuid;
+  // }
+  Store.saveClassMetadata(PROVIDE_DECORATOR, classMetadata, context);
+  console.log(context.metadata.uuid);
+  // if (context.metadata?.uuid) {
+  //   if (args[0]) {
+  //     const metadata: ClassMetadata = {};
+  //     if (Types.isObject(args[0])) {
+  //       metadata.provider = args[0].provider;
+  //       metadata.scope = args[0].scope;
+  //     } else {
+  //       if (args[0]) {
+  //         metadata.provider = args[0];
+  //       } else if (args[1]) {
+  //         metadata.scope = args[1];
+  //       }
+  //     }
+  //     saveClassMetadata(PROVIDE_DECORATOR, metadata, context);
+  //   }
+  // } else {
+  //   console.log('进来了', context.metadata);
+  // }
   return target;
 });
