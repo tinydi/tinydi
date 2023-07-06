@@ -1,4 +1,4 @@
-export interface AccessMetadata<This = unknown, Value = unknown> {
+export interface FieldAccessMetadata<This = unknown, Value = unknown> {
   /**
    * Determines whether an object has a property with the same name as the decorated element.
    */

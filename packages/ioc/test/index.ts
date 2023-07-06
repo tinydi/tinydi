@@ -1,5 +1,7 @@
+import { Singleton } from '../src/decorators/core/singleton';
 import { Autowired } from '../src/decorators/core/autowired';
-import { Provide } from '../src/decorators/core/provide';
+import { SymbolMetadata } from '../src/utils/symbol.utils';
+import { Init } from '../src/decorators/core/definition';
 
 
 // export interface Animal {
@@ -17,8 +19,14 @@ export class Dog {
 //     console.log('cat');
 //   }
 // }
-@Provide()
+@Singleton()
 export class User {
-  // @Autowired(Dog)
+  @Init([Dog])
+  init(dog:Dog){
+
+  }
+  @Autowired()
   dog:Dog
 }
+const data = User[SymbolMetadata]
+console.log(data);

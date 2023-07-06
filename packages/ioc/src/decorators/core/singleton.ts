@@ -1,8 +1,10 @@
 import { ClassDecoratorFunction } from '../../interface/decorators/decorator';
-import { ClassMetadata } from '../../interface/decorators/metadata/class-metadata.interface';
 import { Identifier } from '../../interface/common/identifier';
 import { ClassType } from '../../interface/common/type';
-import { createDecorator } from '../factory';
+import { createClassDecorator } from '../factory';
+import { ProvideMetadata } from '../../interface/decorators/metadata/provide-metadata.interface';
+import { SINGLETON_DECORATOR } from '../constant';
+import { Scope } from '../../enums/scope.enum';
 
 export interface ProvideDecorator {
   /**
@@ -24,7 +26,7 @@ export interface ProvideDecorator {
    * })
    * class MyService {}
    */
-  (metadata?: Pick<ClassMetadata, 'provider'>): ClassDecoratorFunction<any, any, any>;
+  (metadata?: Pick<ProvideMetadata, 'identifier'>): ClassDecoratorFunction<any, any, any>;
   /**
    * Provide decorator
    * @param target
@@ -36,4 +38,6 @@ export interface ProvideDecorator {
    */
   (target?: ClassType, _context?: ClassDecoratorContext): void;
 }
-export const Singleton: ProvideDecorator = createDecorator('Singleton', (target, context, args) => {});
+export const Singleton: ProvideDecorator = createClassDecorator(SINGLETON_DECORATOR, null, metadata => {
+  metadata.scope = Scope.Singleton;
+});

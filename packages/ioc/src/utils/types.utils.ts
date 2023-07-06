@@ -3,8 +3,17 @@ import { SymbolMetadata } from './symbol.utils';
 export namespace Types {
   const anon = /^function\s+\(|^function\s+anonymous\(|^\(?(\w+,)*\w+\)?\s*\=\>|^\(\s*\)\s*\=\>/;
   const clify = /^class\s+\{/;
+  const hasOwn = Object.prototype.hasOwnProperty;
+  const toStr = Object.prototype.toString;
   export function isString(value) {
     return typeof value === 'string';
+  }
+  export function isBoolean(target: any): target is boolean {
+    return typeof target === 'boolean';
+  }
+
+  export function isArray(target: any): target is Array<any> {
+    return Array.isArray(target);
   }
   export function isObject(value) {
     return value !== null && typeof value === 'object';
@@ -13,8 +22,26 @@ export namespace Types {
     return typeof value === 'symbol' || (isObject(value) && Object.prototype.toString.call(value) === '[object Symbol]');
   }
 
-  export function isArray(target: any): target is Array<any> {
-    return Array.isArray(target);
+  export function isPlainObject(obj) {
+    if (!obj || toStr.call(obj) !== '[object Object]') {
+      return false;
+    }
+
+    const hasOwnConstructor = hasOwn.call(obj, 'constructor');
+    const hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+    // Not own constructor property must be Object
+    if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+      return false;
+    }
+
+    // Own properties are enumerated firstly, so to speed up,
+    // if last one is own, then all properties are own.
+    let key;
+    for (key in obj) {
+      /**/
+    }
+
+    return typeof key === 'undefined' || hasOwn.call(obj, key);
   }
 
   export function isClass(target, exclude?: (target: any) => boolean) {
@@ -43,6 +70,24 @@ export namespace Types {
   }
   export function isFunction(value) {
     return typeof value === 'function';
+  }
+  /**
+   * is metadata object or not.
+   *
+   * @export
+   * @param {*} target
+   * @param {...(string|string[])[]} props
+   * @returns {boolean}
+   */
+  export function isMetadataObject(target: any, ...props: (string | string[])[]): boolean {
+    if (!isPlainObject(target)) {
+      return false;
+    }
+    if (props.length) {
+      return Object.keys(target).some(n => props.some(ps => (isString(ps) ? ps === n : ps.indexOf(n) > 0)));
+    }
+
+    return true;
   }
 }
 

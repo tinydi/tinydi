@@ -1,9 +1,16 @@
-import { ProvideMetadata } from './provide-metadata.interface';
-import { TypeMetadata } from './type-metadata.interface';
-import { AccessMetadata } from './access-metadata';
+import { FieldAccessMetadata } from './field-access-metadata';
 import { InjectMode } from '../../../enums/inject-mode.enum';
+import { Identifier } from '../../common/identifier';
+import { ClassType } from '../../common/type';
+import { Metadata } from './metadata.interface';
 
-export interface PropertyMetadata extends ProvideMetadata, TypeMetadata {
+export interface FieldMetadata extends Metadata {
+  /**
+   * the field inject provider
+   * @type {Identifier | ClassType}
+   * @memberof FieldMetadata
+   */
+  provider?: Identifier | ClassType;
   /**
    * property is public
    * @type {boolean}
@@ -24,10 +31,10 @@ export interface PropertyMetadata extends ProvideMetadata, TypeMetadata {
   propertyKey?: string | symbol;
   /**
    * property accessors
-   * @type {AccessMetadata}
+   * @type {FieldAccessMetadata}
    * @memberof PropertyMetadata
    */
-  access?: AccessMetadata;
+  access?: FieldAccessMetadata;
   /**
    * property inject mode
    * @type {InjectMode}
