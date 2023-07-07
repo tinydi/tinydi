@@ -72,7 +72,7 @@ export namespace Types {
     return typeof value === 'function';
   }
   /**
-   * is metadata object or not.
+   * is options object or not.
    *
    * @export
    * @param {*} target

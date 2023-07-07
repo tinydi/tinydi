@@ -4,7 +4,7 @@ import { Identifier } from '../../interface/common/identifier';
 import { ClassType } from '../../interface/common/type';
 import { createClassDecorator } from '../factory';
 import { PROVIDE_DECORATOR } from '../constant';
-import { ProvideMetadata } from '../../interface/decorators/metadata/provide-metadata.interface';
+import { ProvideMetadata } from '../../interface/decorators/options/provide.options';
 
 export interface ProvideDecorator {
   /**

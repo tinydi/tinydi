@@ -1,14 +1,12 @@
-import { Metadata } from './metadata.interface';
 import { ClassType } from '../../common/type';
 
 /**
- * type metadata
+ * type options
  * @export
- * @extends {Metadata}
  * @interface TypeMetadata
  * @template T
  */
-export interface TypeMetadata extends Metadata {
+export interface TypeMetadata {
   /**
    * class type
    * @type {ClassType}

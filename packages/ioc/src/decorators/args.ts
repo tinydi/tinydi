@@ -1,4 +1,3 @@
-import { Metadata } from '../interface/decorators/metadata/metadata.interface';
 import { Handler } from '../interface/common/handler';
 
 /**
@@ -7,7 +6,7 @@ import { Handler } from '../interface/common/handler';
  * @export
  * @class ArgsContext
  */
-export class ArgsContext<T extends Metadata = Metadata> {
+export class ArgsContext<T = Record<string, any>> {
   constructor(public args: any[]) {
     this.currIndex = 0;
     this.metadata = {} as T;
@@ -31,7 +30,7 @@ export class ArgsContext<T extends Metadata = Metadata> {
     }
   }
 
-  getMetadate() {
+  getMetadata() {
     return this.currIndex > 0 ? this.metadata : null;
   }
 
@@ -43,4 +42,4 @@ export class ArgsContext<T extends Metadata = Metadata> {
 /**
  * args iterator action.
  */
-export type ArgsIteratorAction<T extends Metadata = Metadata> = Handler<ArgsContext<T>>;
+export type ArgsIteratorAction<T extends Record<string, any>> = Handler<ArgsContext<T>>;

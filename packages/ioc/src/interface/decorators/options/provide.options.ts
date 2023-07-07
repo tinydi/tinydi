@@ -1,14 +1,13 @@
 import { Identifier } from '../../common/identifier';
-import { PatternMetadata } from './scope-metadata.interface';
 
 /**
- * provide metadata
+ * provide options
  * @export
  * @interface ProvideMetadata
  * @extends {Metadata}
  * @template T
  */
-export interface ProvideMetadata extends PatternMetadata {
+export interface ProvideMetadata {
   /**
    * The token to provide.
    * @type {Identifier}

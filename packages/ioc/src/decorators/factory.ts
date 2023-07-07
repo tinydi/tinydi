@@ -1,22 +1,15 @@
 import { Types } from '../utils/types.utils';
 import { ArgsContext, ArgsIteratorAction } from './args';
-import { Metadata } from '../interface/decorators/metadata/metadata.interface';
 import { chain } from '../interface/common/handler';
-import { ClassMetadata } from '../interface/decorators/metadata/class-metadata.interface';
+import { ClassOptions } from '../interface/decorators/options/class-options.interface';
 
-import { camelCase } from '../utils/camelcase.utils';
-import { FieldMetadata } from '../interface/decorators/metadata/field-metadata.interface';
-import { InjectMode } from '../enums/inject-mode.enum';
-import { AutowiredMetadata } from '../interface/decorators/metadata/autowired-metadata.interface';
-import { MethodMetadata } from '../interface/decorators/metadata/method-metadata.interface';
-import { Store } from './store';
-import { Runtime } from '../utils/runtime.utils';
+import { FieldMetadata } from '../interface/decorators/options/field-options.interface';
+import { AutowiredOptions } from '../interface/decorators/options/autowired-options.interface';
+import { MethodMetadata } from '../interface/decorators/options/method-metadata.interface';
 import isMetadataObject = Types.isMetadataObject;
-import isClass = Types.isClass;
-import getParamNames = Runtime.getParamNames;
 
 /**
- * extend metadata.
+ * extend options.
  *
  * @export
  * @interface MetadataExtends
@@ -57,7 +50,7 @@ export function createDecorator<T>(name: string, actions?: ArgsIteratorAction<T>
  * @param {string} name
  * @param {boolean} [appendCheck]
  */
-export function createClassDecorator<T extends ClassMetadata>(name: string, appendCheck?: boolean);
+export function createClassDecorator<T extends ClassOptions>(name: string, appendCheck?: boolean);
 /**
  * create class decorator
  *
@@ -67,21 +60,21 @@ export function createClassDecorator<T extends ClassMetadata>(name: string, appe
  * @param {ArgsIteratorAction<T>[]} [actions]
  * @param {boolean} [appendCheck]
  */
-export function createClassDecorator<T extends ClassMetadata>(name: string, actions?: ArgsIteratorAction<T>[], appendCheck?: boolean);
+export function createClassDecorator<T extends ClassOptions>(name: string, actions?: ArgsIteratorAction<T>[], appendCheck?: boolean);
 /**
  * create class decorator
  *
  * @export
- * @template T metadata type.
+ * @template T options type.
  * @param {string} name decorator name.
- * @param {ArgsIteratorAction<T>[]} [actions]  metadata iterator action.
- * @param {MetadataExtends<T>} [metadataExtends] add extents for metadata.
+ * @param {ArgsIteratorAction<T>[]} [actions]  options iterator action.
+ * @param {MetadataExtends<T>} [metadataExtends] add extents for options.
  * @param {boolean} [appendCheck] default false
  * @returns {*}
  */
-export function createClassDecorator<T extends ClassMetadata>(name: string, actions?: ArgsIteratorAction<T>[], metadataExtends?: MetadataExtends<T>, appendCheck?: boolean);
+export function createClassDecorator<T extends ClassOptions>(name: string, actions?: ArgsIteratorAction<T>[], metadataExtends?: MetadataExtends<T>, appendCheck?: boolean);
 
-export function createClassDecorator<T extends ClassMetadata>(name: string, actions?: any, metadataExtends?: any, appendCheck = false) {
+export function createClassDecorator<T extends ClassOptions>(name: string, actions?: any, metadataExtends?: any, appendCheck = false) {
   if (Types.isBoolean(actions)) {
     appendCheck = actions;
     actions = undefined;
@@ -103,17 +96,16 @@ export function createClassDecorator<T extends ClassMetadata>(name: string, acti
       }
     );
   }
-  const decorator = createDecorator<T>(name, actions, metadataExtends);
-  return decorator;
+  return createDecorator<T>(name, actions, metadataExtends);
 }
 
 /**
  * create field method param decorator
  * @param name {string} decorator name
- * @param actions {ArgsIteratorAction<T extends FieldMetadata>[]} metadata iterator action.metadata iterator action.
- * @param metadataExtends {MetadataExtends<T extends FieldMetadata>} add extents for metadata.
+ * @param actions {ArgsIteratorAction<T extends FieldMetadata>[]} options iterator action.options iterator action.
+ * @param metadataExtends {MetadataExtends<T extends FieldMetadata>} add extents for options.
  */
-export function createMethodPropParamDecorator<T extends AutowiredMetadata>(name: string, actions?: ArgsIteratorAction<T>[], metadataExtends?: MetadataExtends<T>) {
+export function createMethodPropParamDecorator<T extends AutowiredOptions>(name: string, actions?: ArgsIteratorAction<T>[], metadataExtends?: MetadataExtends<T>) {
   actions = actions || [];
   actions.push((ctx, next) => {
     const arg = ctx.currArg;
@@ -125,11 +117,10 @@ export function createMethodPropParamDecorator<T extends AutowiredMetadata>(name
       ctx.next(next);
     }
   });
-  const decorator = createDecorator<T>(name, actions, metadataExtends);
-  return decorator;
+  return createDecorator<T>(name, actions, metadataExtends);
 }
 
-function argsToMetadata<T extends Metadata>(args: any[], actions?: ArgsIteratorAction<T>[]): T {
+function argsToMetadata<T extends Record<string, any>>(args: any[], actions?: ArgsIteratorAction<T>[]): T {
   let metadata: T = null;
   if (args.length) {
     if (args.length === 1 && isMetadataObject(args[0])) {
@@ -137,7 +128,7 @@ function argsToMetadata<T extends Metadata>(args: any[], actions?: ArgsIteratorA
     } else if (actions) {
       const ctx = new ArgsContext<T>(args);
       chain(actions, ctx);
-      metadata = ctx.getMetadate();
+      metadata = ctx.getMetadata();
     }
   }
   return metadata;
@@ -157,18 +148,18 @@ function storeMetadata<T>(name: string, metaName: string, target: any, context: 
   }
 }
 
-function storeClassMetadata<T extends ClassMetadata>(name: string, metaName: string, target: any, context: DecoratorContext, metadata?: any, metadataExtends?: MetadataExtends<T>) {
-  const classMetadata = (metadata || {}) as T;
-  if (!classMetadata.type) {
-    classMetadata.type = target;
-  }
-  classMetadata.decorator = name;
-  classMetadata.name = camelCase(context.name.toString());
-  classMetadata.originalName = context.name.toString();
-  if (metadataExtends) {
-    metadataExtends(classMetadata);
-  }
-  Store.saveClassMetadata(metaName, classMetadata, context);
+function storeClassMetadata<T extends ClassOptions>(name: string, metaName: string, target: any, context: DecoratorContext, metadata?: any, metadataExtends?: MetadataExtends<T>) {
+  // const classMetadata = (metadata || {}) as T;
+  // if (!classMetadata.type) {
+  //   classMetadata.type = target;
+  // }
+  // classMetadata.decorator = name;
+  // classMetadata.name = camelCase(context.name.toString());
+  // classMetadata.originalName = context.name.toString();
+  // if (metadataExtends) {
+  //   metadataExtends(classMetadata);
+  // }
+  // Store.saveClassMetadata(metaName, classMetadata, context);
 }
 
 function storeFieldMetadata<T extends FieldMetadata>(
@@ -176,26 +167,28 @@ function storeFieldMetadata<T extends FieldMetadata>(
   metaName: string,
   target: any,
   context: ClassFieldDecoratorContext,
-  metadata?: any,
+  metadata?: T,
   metadataExtends?: MetadataExtends<T>
 ) {
-  const fieldMetadata = (metadata || {}) as T;
-  fieldMetadata.propertyKey = context.name;
-  fieldMetadata.decorator = name;
-  fieldMetadata.access = context.access;
-  if (fieldMetadata.provider) {
-    if (isClass(fieldMetadata.provider)) {
-      fieldMetadata.injectMode = InjectMode.Class;
-    } else {
-      fieldMetadata.injectMode = InjectMode.Identifier;
-    }
-  } else {
-    fieldMetadata.injectMode = InjectMode.PropertyKey;
-  }
-  if (metadataExtends) {
-    metadataExtends(fieldMetadata);
-  }
-  return Store.saveFieldMetadata(metaName, fieldMetadata, context);
+  // const fieldDefinition = new FieldDefinition();
+  //
+  // const fieldMetadata = (metadata || {}) as T;
+  // fieldMetadata.propertyKey = context.name;
+  // fieldMetadata.decorator = name;
+  // fieldMetadata.access = context.access;
+  // if (fieldMetadata.provider) {
+  //   if (isClass(fieldMetadata.provider)) {
+  //     fieldMetadata.injectMode = InjectMode.Class;
+  //   } else {
+  //     fieldMetadata.injectMode = InjectMode.Identifier;
+  //   }
+  // } else {
+  //   fieldMetadata.injectMode = InjectMode.PropertyKey;
+  // }
+  // if (metadataExtends) {
+  //   metadataExtends(fieldMetadata);
+  // }
+  // return Store.saveFieldMetadata(metaName, fieldMetadata, context);
 }
 
 function storeMethodMetadata<T extends MethodMetadata>(
@@ -203,19 +196,19 @@ function storeMethodMetadata<T extends MethodMetadata>(
   metaName: string,
   target: any,
   context: ClassMethodDecoratorContext,
-  metadata?: any,
+  metadata?: T,
   metadataExtends?: MetadataExtends<T>
 ) {
-  const methodMetadata = (metadata || {}) as T;
-  methodMetadata.propertyKey = context.name;
-  methodMetadata.decorator = name;
-  methodMetadata.access = context.access;
-  if (metadata.providers && Types.isArray(metadata.providers)) {
-    metadata.providers.forEach(provider => {});
-  }
-  const params = getParamNames(target);
-  if (metadataExtends) {
-    metadataExtends(methodMetadata);
-  }
-  return Store.saveMethodMetadata(metaName, methodMetadata, context);
+  // const methodMetadata = {} as T;
+  // methodMetadata.propertyKey = context.name;
+  // methodMetadata.decorator = name;
+  // methodMetadata.access = context.access;
+  // if (metadata.providers && Types.isArray(metadata.providers)) {
+  //   console.log(metadata.providers);
+  // }
+  // const params = getParamNames(target);
+  // if (metadataExtends) {
+  //   metadataExtends(methodMetadata);
+  // }
+  // return Store.saveMethodMetadata(metaName, methodMetadata, context);
 }

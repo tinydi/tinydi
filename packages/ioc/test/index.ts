@@ -3,7 +3,6 @@ import { Autowired } from '../src/decorators/core/autowired';
 import { SymbolMetadata } from '../src/utils/symbol.utils';
 import { Init } from '../src/decorators/core/definition';
 
-
 // export interface Animal {
 //   say(): void;
 // }
@@ -22,11 +21,9 @@ export class Dog {
 @Singleton()
 export class User {
   @Init([Dog])
-  init(dog:Dog){
-
-  }
+  init(dog: Dog) {}
   @Autowired()
-  dog:Dog
+  dog: Dog;
 }
-const data = User[SymbolMetadata]
+const data = User[SymbolMetadata];
 console.log(data);

@@ -1,10 +1,15 @@
-import { FieldMetadata } from '../decorators/metadata/field-metadata.interface';
+import { FieldMetadata } from '../decorators/options/field-options.interface';
 import { ClassType } from '../common/type';
 import { Scope } from '../../enums/scope.enum';
 import { IFieldsDefinition } from './fields.definition.interface';
 import { Identifier } from '../common/identifier';
+import { FieldsDefinition } from '../../definitions/fields.definition';
+import { FieldDefinition } from '../../definitions/field.definition';
+import { IFieldDefinition } from './field.definition.interface';
+import { IMethodsDefinition } from './methods.definition.interface';
+import { IMethodDefinition } from './method.definition.interface';
 
-export interface IClassDefinition<T extends FieldMetadata> {
+export interface IClassDefinition<T extends IFieldDefinition, U extends IMethodDefinition> {
   /**
    * The class id
    * @type {string}
@@ -73,6 +78,8 @@ export interface IClassDefinition<T extends FieldMetadata> {
   fields: IFieldsDefinition<T>;
   /**
    * List of properties only methods
+   * @type {IMethodsDefinition<IMethodDefinition>}
+   * @memberof IClassDefinition
    */
-  methods: FieldMetadata[];
+  methods: IMethodsDefinition<U>;
 }

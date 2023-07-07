@@ -1,4 +1,5 @@
 import { ClassType } from './type';
+import { InjectMode } from '../../enums/inject-mode.enum';
 
 /**
  * define class id

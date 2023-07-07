@@ -1,7 +1,6 @@
-import { Metadata } from './metadata.interface';
 import { ProviderIdentifier } from '../../common/identifier';
 
-export interface AutowiredMetadata extends Metadata {
+export interface AutowiredOptions {
   /**
    * The provider of the provider to Autowired.
    * @type {ProviderIdentifier}

@@ -1,4 +1,4 @@
-export interface MethodAccessMetadata<This = unknown, Value = unknown> {
+export interface MethodAccessDefinition<This = unknown, Value = unknown> {
   /**
    * Determines whether an object has a property with the same name as the decorated element.
    */

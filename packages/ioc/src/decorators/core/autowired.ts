@@ -1,9 +1,27 @@
-import { AutowiredMetadata } from '../../interface/decorators/metadata/autowired-metadata.interface';
 import { ClassFieldDecoratorFunction, ClassMethodDecoratorFunction } from '../../interface/decorators/decorator';
 import { ProviderIdentifier } from '../../interface/common/identifier';
 import { createMethodPropParamDecorator } from '../factory';
 import { AUTOWIRED_DECORATOR } from '../constant';
 
+export interface AutowiredOptions {
+  /**
+   * The provider of the provider to Autowired.
+   * @type {ProviderIdentifier}
+   * @memberof AutowiredMetadata
+   */
+  provider: ProviderIdentifier;
+  /**
+   * The identifiers of the providers to Autowired.
+   * @type {ProviderIdentifier[]}
+   */
+  providers: ProviderIdentifier[];
+  /**
+   * The name of the property to Autowired.
+   * @type {string}
+   * @memberof AutowiredMetadata
+   */
+  propertyName?: string;
+}
 export interface AutowiredDecorator {
   /**
    * autowired decorator
@@ -40,7 +58,7 @@ export interface AutowiredDecorator {
    * })
    * userService: UserService;
    */
-  (metadata?: Pick<AutowiredMetadata, 'provider'>): ClassFieldDecoratorFunction<any, any, any>;
+  (metadata?: Pick<AutowiredOptions, 'provider'>): ClassFieldDecoratorFunction<any, any, any>;
   /**
    * autowired decorator
    * @param target

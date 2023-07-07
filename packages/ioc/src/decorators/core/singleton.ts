@@ -2,7 +2,7 @@ import { ClassDecoratorFunction } from '../../interface/decorators/decorator';
 import { Identifier } from '../../interface/common/identifier';
 import { ClassType } from '../../interface/common/type';
 import { createClassDecorator } from '../factory';
-import { ProvideMetadata } from '../../interface/decorators/metadata/provide-metadata.interface';
+import { ProvideMetadata } from '../../interface/decorators/options/provide.options';
 import { SINGLETON_DECORATOR } from '../constant';
 import { Scope } from '../../enums/scope.enum';
 
