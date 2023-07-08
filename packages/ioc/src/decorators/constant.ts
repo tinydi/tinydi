@@ -1,3 +1,2 @@
-export const PROVIDE_DECORATOR = 'Provide';
-export const SINGLETON_DECORATOR = 'Singleton';
-export const AUTOWIRED_DECORATOR = 'Autowired';
+export const INJECT_CLASS_DECORATOR = Symbol.for('injectClass');
+const PROVIDE_DECORATOR = Symbol.for('provide');

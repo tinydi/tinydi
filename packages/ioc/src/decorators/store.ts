@@ -1,15 +1,12 @@
-import { ClassType } from '../interface/common/type';
 import { SymbolMetadata } from '../utils/symbol.utils';
-import { IClassDefinition } from '../interface/definitions/class.definition.interface';
-import { IFieldDefinition } from '../interface/definitions/field.definition.interface';
-import { IMethodDefinition } from '../interface/definitions/method.definition.interface';
+import { ProvideMetadata } from '../interface/decorators/metadata/provide.metadata';
+import { DecoratorTarget } from '../interface/decorators/decorator';
+import { Identifier } from '../interface/common/identifier';
+import { INJECT_CLASS_DECORATOR } from './constant';
 
 export namespace Store {
-  // Mapping of decorator options
-  const decoratorContext = new Map<string, DecoratorMetadata>();
-  // Mapping of options class
-  const classStore = new WeakMap<any, IClassDefinition<IFieldDefinition, IMethodDefinition>>();
-  const getDecoratorMetadata = (target: ClassType | DecoratorContext | DecoratorMetadata): DecoratorMetadata => {
+  const storeMap = new WeakMap<DecoratorMetadataObject, any>();
+  const getDecoratorMetadata = (target: DecoratorTarget): DecoratorMetadataObject => {
     if (target[SymbolMetadata]) {
       target = target[SymbolMetadata];
     } else if ((target as DecoratorContext)?.metadata) {
@@ -17,71 +14,60 @@ export namespace Store {
     }
     return target as DecoratorMetadata;
   };
-  export function saveClassMetadata(decorator: string, metadata: IClassDefinition<IFieldDefinition, IMethodDefinition>, target: ClassType);
-  export function saveClassMetadata(decorator: string, metadata: IClassDefinition<IFieldDefinition, IMethodDefinition>, decoratorContext: DecoratorContext);
-  export function saveClassMetadata(decorator: string, metadata: IClassDefinition<IFieldDefinition, IMethodDefinition>, decoratorMetadata: DecoratorMetadata);
-  export function saveClassMetadata(
-    decorator: string,
-    metadata: IClassDefinition<IFieldDefinition, IMethodDefinition>,
-    decoratorMetadata: ClassType | DecoratorContext | DecoratorMetadata
-  ) {
-    // const target = getDecoratorMetadata(decoratorMetadata);
-    // let classDefinition: IClassDefinition<IFieldDefinition, IMethodDefinition>;
-    // if (!classStore.has(target)) {
-    //   classDefinition = new ClassDefinition();
-    //   classStore.set(target, classDefinition);
-    // } else {
-    //   classDefinition = classStore.get(target);
-    //   if (classDefinition.uuid) {
-    //     if (metadata.identifier) {
-    //       if (classDefinition.id !== metadata.identifier) {
-    //         classDefinition.id = metadata.identifier;
-    //         console.debug(`update provide: ${target.name} -> ${classDefinition.uuid}`);
-    //       }
-    //     }
-    //   } else {
-    //     classDefinition.id = metadata.identifier;
-    //     classDefinition.uuid = generateUUID();
-    //     classDefinition.type = metadata.type;
-    //     classDefinition.scope = metadata.scope;
-    //     classDefinition.name = metadata.name;
-    //   }
-    // }
-    // classDefinition.decorators.push(decorator);
-    // classDefinition.namespaces.push(metadata.namespace ?? 'root');
-    // console.log(classStore.get(target));
+  const getDataContainer = (target: DecoratorMetadataObject): Map<Identifier, any> => {
+    let dataMap;
+    if (!storeMap.has(target)) {
+      dataMap = new Map<string | symbol, any>();
+      storeMap.set(target, dataMap);
+    }
+    return dataMap;
+  };
+  export function saveMetadata(decorator: Identifier, target: DecoratorTarget, key: Identifier, data: any) {
+    const dataContainer = getDataContainer(getDecoratorMetadata(target));
+    let dataMap: Map<Identifier, any>;
+    if (dataContainer.has(decorator)) {
+      dataMap = dataContainer.get(decorator);
+    } else {
+      dataMap = new Map<Identifier, any>();
+    }
+    dataMap.set(key, data);
   }
 
-  export function saveFieldMetadata(decorator: string, metadata: IFieldDefinition, target: ClassType);
-  export function saveFieldMetadata(decorator: string, metadata: IFieldDefinition, decoratorContext: DecoratorContext);
-  export function saveFieldMetadata(decorator: string, metadata: IFieldDefinition, decoratorMetadata: DecoratorMetadata);
-  export function saveFieldMetadata(decorator: string, metadata: IFieldDefinition, decoratorMetadata: ClassType | DecoratorContext | DecoratorMetadata) {
-    // const target = getDecoratorMetadata(decoratorMetadata);
-    // let classDefinition: IClassDefinition<ClassOptions>;
-    // if (!classStore.has(target)) {
-    //   classDefinition = new ClassDefinition();
-    //   classStore.set(target, classDefinition);
-    // } else {
-    //   classDefinition = classStore.get(target);
-    // }
-    // let fieldDefinition: IFieldsDefinition<ClassOptions>;
-    // if (!classDefinition.fields) {
-    //   fieldDefinition = new FieldsDefinition();
-    //   classDefinition.fields = new FieldsDefinition();
-    // } else {
-    //   fieldDefinition = classDefinition.fields;
-    // }
-    // fieldDefinition.setField(metadata.propertyKey, metadata);
-    // console.log(classStore.get(target));
+  export function getMetadata(decorator: Identifier, target: DecoratorTarget, key?: Identifier) {
+    const dataContainer = getDataContainer(getDecoratorMetadata(target));
+    let dataMap: Map<Identifier, any>;
+    if (dataContainer.has(decorator)) {
+      dataMap = dataContainer.get(decorator);
+    } else {
+      dataMap = new Map<Identifier, any>();
+    }
+    if (!key) return dataMap;
+    return dataMap.get(key);
   }
 
-  // export function saveMergerDefinition(decorator: string, metadata: ClassOptions, target: ClassType);
-  // export function saveMergerDefinition(decorator: string, metadata: ClassOptions, decoratorContext: DecoratorContext);
-  // export function saveMergerDefinition(decorator: string, metadata: ClassOptions, decoratorMetadata: DecoratorMetadata);
-  // export function saveMergerDefinition(decorator: string, metadata: ClassOptions, target: ClassType | DecoratorContext | DecoratorMetadata) {}
+  export function hasMetadata(decorator: Identifier, target: DecoratorTarget, key?: Identifier) {
+    const dataContainer = getDataContainer(getDecoratorMetadata(target));
+    if (!dataContainer.has(decorator)) return false;
+    if (!key) return true;
+    return dataContainer.get(decorator).has(key);
+  }
 
-  export function saveMethodMetadata(decorator: string, metadata: IMethodDefinition, target: ClassType);
-  export function saveMethodMetadata(decorator: string, metadata: IMethodDefinition, decoratorContext: DecoratorContext);
-  export function saveMethodMetadata(decorator: string, metadata: IMethodDefinition, decoratorMetadata: DecoratorMetadata);
-  export function saveMethodMetadata(decorator: string, metadata: IMethodDefinition, target: ClassType | DecoratorContext | DecoratorMetadata) {}
+  export function saveClassMetadata(decorator: Identifier, data: any, target: DecoratorTarget, merge?: boolean) {
+    if (merge && typeof data === 'object') {
+      const oldData = getClassMetadata(decorator, target);
+      if (!oldData) {
+        saveMetadata(INJECT_CLASS_DECORATOR, target, decorator, data);
+      }
+    }
+  }
+
+  export function getClassMetadata(decorator: Identifier, target: DecoratorTarget) {
+    return getMetadata(INJECT_CLASS_DECORATOR, target, decorator);
+  }
+
+  export function hasClassMetadata(decorator: Identifier, target: DecoratorTarget) {}
+
+  export function saveProvide(data: ProvideMetadata, target: DecoratorTarget) {}
+
+  export function isProvide(target: DecoratorTarget) {}
 }

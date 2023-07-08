@@ -1,5 +1,4 @@
 import { IClassDefinition } from '../interface/definitions/class.definition.interface';
-import { FieldMetadata } from '../interface/decorators/options/field-options.interface';
 import { ClassType } from '../interface/common/type';
 import { Scope } from '../enums/scope.enum';
 import { FieldsDefinition } from './fields.definition';

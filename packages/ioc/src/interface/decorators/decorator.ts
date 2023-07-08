@@ -1,5 +1,6 @@
 import { ClassType } from '../common/type';
 
+export type DecoratorTarget = ClassType | DecoratorContext | DecoratorMetadata;
 /**
  * typescript new class decorator
  */
