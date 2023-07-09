@@ -3,6 +3,9 @@ import { Identifier } from '../../interface/common/identifier';
 import { Scope } from '../../enums/scope.enum';
 import { ClassDecoratorFunction } from '../../interface/decorators/decorator';
 import { Store } from '../store';
+import { Types } from '../../utils/types.utils';
+import isMetadataObject = Types.isMetadataObject;
+import { ProviderMetadata } from '../../interface/decorators/metadata/provide.metadata';
 
 export interface InjectableOptions {
   /**
@@ -57,7 +60,11 @@ export interface InjectableDecorator {
   (target: any, context: ClassDecoratorContext): void;
 }
 export const Injectable = createDecorator((target, context, identifier: Identifier, scope: Scope) => {
-  if (scope) {
-    Store.saveProvide({ identifier, scope }, context);
+  let metadata: ProviderMetadata;
+  if (isMetadataObject(identifier)) {
+    metadata = identifier as ProviderMetadata;
+  } else {
+    metadata = { identifier, scope };
   }
+  Store.saveProviderMetadata(metadata, context);
 }) as InjectableDecorator;

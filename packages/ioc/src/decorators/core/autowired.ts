@@ -1,7 +1,8 @@
 import { ClassFieldDecoratorFunction, ClassMethodDecoratorFunction } from '../../interface/decorators/decorator';
 import { ProviderIdentifier } from '../../interface/common/identifier';
-import { createMethodPropParamDecorator } from '../factory';
-import { AUTOWIRED_DECORATOR } from '../constant';
+import { createDecorator } from '../factory';
+import { DecoratorNotValidException } from '../../exceptions/decorator-not-valid.exception';
+import { Store } from '../store';
 
 export interface AutowiredOptions {
   /**
@@ -15,12 +16,6 @@ export interface AutowiredOptions {
    * @type {ProviderIdentifier[]}
    */
   providers: ProviderIdentifier[];
-  /**
-   * The name of the property to Autowired.
-   * @type {string}
-   * @memberof AutowiredMetadata
-   */
-  propertyName?: string;
 }
 export interface AutowiredDecorator {
   /**
@@ -58,7 +53,7 @@ export interface AutowiredDecorator {
    * })
    * userService: UserService;
    */
-  (metadata?: Pick<AutowiredOptions, 'provider'>): ClassFieldDecoratorFunction<any, any, any>;
+  (metadata?: Pick<AutowiredOptions, 'providers'>): ClassFieldDecoratorFunction<any, any, any>;
   /**
    * autowired decorator
    * @param target
@@ -70,4 +65,19 @@ export interface AutowiredDecorator {
    */
   (target: any, context: ClassFieldDecoratorContext): void;
 }
-export const Autowired: AutowiredDecorator = createMethodPropParamDecorator(AUTOWIRED_DECORATOR, null);
+
+export function A(): any {
+  return;
+}
+export const Autowired: AutowiredDecorator = createDecorator((target, context, provider) => {
+  switch (context.kind) {
+    case 'field':
+      Store.saveInjectFieldMetadata(context, provider);
+      break;
+    case 'method':
+      Store.saveInjectMethodMetadata(context, provider);
+      break;
+    default:
+      throw new DecoratorNotValidException('Autowired');
+  }
+});

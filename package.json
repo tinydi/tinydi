@@ -13,6 +13,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "build": "tsc -b -v packages"
+  },
   "keywords": [
     "typescript ioc",
     "ioc",
